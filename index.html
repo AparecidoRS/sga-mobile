@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173f35"><link rel="manifest" href="manifest.webmanifest">
+<title>SGA - Mobile</title>
+<style>
+:root{--green:#173f35;--green2:#245b4c;--bg:#f3f6f4;--card:#fff;--text:#1e2924;--muted:#718078;--line:#e2e9e4;--red:#a94438}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--green);color:white;padding:20px 18px 18px;border-radius:0 0 22px 22px}
+header .top{display:flex;justify-content:space-between;align-items:center}header h1{font-size:21px;margin:0}header p{margin:6px 0 0;color:#d6e5de;font-size:13px}
+main{max-width:760px;margin:auto;padding:16px 14px 90px}.section{margin:18px 0 9px;font-weight:750;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 2px 8px #193d2c08}
+.metric small,.muted{color:var(--muted)}.metric strong{display:block;font-size:23px;margin-top:5px}.aviary{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.pill{font-size:11px;background:#e8f2ed;color:var(--green2);padding:5px 8px;border-radius:20px}
+button,.btn{border:0;border-radius:12px;padding:12px 14px;background:var(--green2);color:white;font-weight:650;font-size:14px;cursor:pointer}.btn.secondary,button.secondary{background:#e8efeb;color:var(--green)}button.danger{background:#f8e9e7;color:var(--red)}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.actions button{text-align:left;min-height:58px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:5}
+nav button{background:transparent;color:var(--muted);padding:8px 5px;font-size:12px;flex:1}nav button.active{color:var(--green);background:#edf4f0}
+.view{display:none}.view.active{display:block}label{display:block;font-size:13px;font-weight:650;margin:13px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #d6e0d9;border-radius:11px;background:white;font:inherit;color:var(--text)}textarea{min-height:75px}form .submit{width:100%;margin-top:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.listitem{padding:12px 0;border-bottom:1px solid var(--line)}.empty{padding:22px;text-align:center;color:var(--muted)}
+.notice{font-size:12px;color:var(--muted);line-height:1.45;margin-top:10px}
+h2{font-size:19px;margin:8px 0}.back{margin:8px 0 14px}.hidden{display:none!important}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.actions{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div class="top"><h1>🐔 SGA - Mobile</h1><span class="pill" style="background:#dcebe4">OFFLINE</span></div><p>Seu apoio diário na gestão dos aviários</p></header>
+<main>
+<section id="dashboard" class="view active">
+ <div class="section">Visão geral</div>
+ <div class="grid" id="summary"></div>
+ <div class="section">Aviários</div><div id="aviaries"></div>
+ <div class="section">Lançamentos rápidos</div>
+ <div class="actions">
+  <button onclick="show('mortality')">☠️ Mortalidade</button><button onclick="show('feed')">🍚 Recebimento de ração</button>
+  <button onclick="show('water')">💧 Consumo de água</button><button onclick="show('environment')">🌡️ Ambiente</button>
+  <button onclick="show('weighing')">⚖️ Pesagem</button><button onclick="show('register')">🏢 Cadastros</button>
+ </div>
+ <p class="notice">Os dados desta versão ficam armazenados neste aparelho. Faça backups regularmente.</p>
+</section>
+<section id="register" class="view">
+ <h2>Cadastros</h2>
+ <div class="card">
+ <h3>Aviário</h3><form id="aviaryForm"><label>Identificação</label><input name="name" placeholder="AV01" required><div class="row"><div><label>Capacidade (aves)</label><input name="capacity" type="number" min="0"></div><div><label>Área útil (m²)</label><input name="area" type="number" min="0" step=".01"></div></div><button class="submit">Salvar aviário</button></form>
+ </div>
+ <div class="card" style="margin-top:12px"><h3>Lote individual</h3><form id="lotForm"><label>Aviário</label><select name="aviary" id="lotAviary" required></select><label>Código interno</label><input name="code" placeholder="LT000001"><label>Código BRF</label><input name="brf"><label>Lote geral (opcional)</label><input name="general"><div class="row"><div><label>Data de alojamento</label><input name="date" type="date" required></div><div><label>Aves alojadas</label><input name="birds" type="number" min="1" required></div></div><label>Tipo</label><select name="type"><option>Misto</option><option>Macho</option><option>Fêmea</option></select><button class="submit">Salvar lote</button></form></div>
+ <div class="section">Aviários cadastrados</div><div id="aviaryList"></div>
+</section>
+<section id="mortality" class="view"><h2>☠️ Mortalidade</h2><div class="card"><form id="mortalityForm"><label>Aviário</label><select name="aviary" class="aviarySelect" required></select><label>Lote</label><select name="lot" class="lotSelect"></select><div class="row"><div><label>Data</label><input name="date" type="date" required></div><div><label>Hora</label><input name="time" type="time" required></div></div><label>Classificação</label><select name="cause"><option>M. naturais</option><option>Refugo</option><option>P. perna</option><option>Outra causa</option></select><label>Quantidade de aves</label><input name="qty" type="number" min="1" required><label>Observações</label><textarea name="notes"></textarea><button class="submit">Salvar lançamento</button></form></div></section>
+<section id="feed" class="view"><h2>🍚 Recebimento de ração</h2><div class="card"><form id="feedForm"><label>Aviário</label><select name="aviary" class="aviarySelect" required></select><label>Lote</label><select name="lot" class="lotSelect"></select><div class="row"><div><label>Data</label><input name="date" type="date" required></div><div><label>Hora</label><input name="time" type="time" required></div></div><label>Tipo de ração</label><input name="feedType" placeholder="FP11, FP12, FP14..." required><div class="row"><div><label>Quantidade (kg)</label><input name="kg" type="number" min="0.01" step=".01" required></div><div><label>Silo</label><select name="silo"><option>Silo 01</option><option>Silo 02</option><option>Outro</option></select></div></div><label>Identificação da nota/carga</label><input name="reference"><label>Observações</label><textarea name="notes"></textarea><button class="submit">Salvar recebimento</button></form></div></section>
+<section id="water" class="view"><h2>💧 Consumo de água</h2><div class="card"><form id="waterForm"><label>Aviário</label><select name="aviary" class="aviarySelect" required></select><label>Lote</label><select name="lot" class="lotSelect"></select><div class="row"><div><label>Data</label><input name="date" type="date" required></div><div><label>Período</label><select name="period"><option>Dia inteiro</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div></div><label>Consumo (litros)</label><input name="liters" type="number" min="0" step=".1" required><label>Observações</label><textarea name="notes"></textarea><button class="submit">Salvar consumo</button></form></div></section>
+<section id="environment" class="view"><h2>🌡️ Ambiente</h2><div class="card"><form id="environmentForm"><label>Aviário</label><select name="aviary" class="aviarySelect" required></select><label>Lote</label><select name="lot" class="lotSelect"></select><label>Data</label><input name="date" type="date" required><div class="row"><div><label>Temperatura mínima (°C)</label><input name="tmin" type="number" step=".1" required></div><div><label>Temperatura máxima (°C)</label><input name="tmax" type="number" step=".1" required></div><div><label>Umidade mínima (%)</label><input name="hmin" type="number" step=".1" required></div><div><label>Umidade máxima (%)</label><input name="hmax" type="number" step=".1" required></div></div><label>Observações</label><textarea name="notes"></textarea><button class="submit">Salvar ambiente</button></form></div></section>
+<section id="weighing" class="view"><h2>⚖️ Pesagem</h2><div class="card"><p class="muted">Nesta primeira versão, a tela está reservada. A próxima entrega implementará as amostras, tara, peso líquido, média por amostra, média geral e local da coleta.</p></div></section>
+<section id="history" class="view"><h2>Histórico de lançamentos</h2><div id="historyList"></div><button class="secondary" onclick="backup()">⬇️ Exportar backup JSON</button></section>
+</main>
+<nav><button class="active" data-view="dashboard" onclick="show('dashboard')">⌂<br>Início</button><button data-view="register" onclick="show('register')">＋<br>Cadastro</button><button data-view="mortality" onclick="show('mortality')">✎<br>Lançar</button><button data-view="history" onclick="show('history')">▤<br>Histórico</button></nav>
+<script>
+const DB='sga_mobile_db', STORE='records';
+let db;
+function openDB(){return new Promise((resolve,reject)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{let d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});};r.onsuccess=()=>{db=r.result;resolve(db)};r.onerror=()=>reject(r.error)})}
+function all(){return new Promise((res,rej)=>{let r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function save(obj){return new Promise((res,rej)=>{let r=db.transaction(STORE,'readwrite').objectStore(STORE).add(obj);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));refresh()}
+function val(form,name){return form.elements[name]?.value||''}
+function today(){let d=new Date();return d.toISOString().slice(0,10)}
+function stamp(form){return {date:val(form,'date')||today(),time:val(form,'time')||new Date().toTimeString().slice(0,5)}}
+async function submitForm(id,type){let f=document.getElementById(id);f.addEventListener('submit',async e=>{e.preventDefault();let o={type,createdAt:new Date().toISOString()};for(let el of f.elements)if(el.name)o[el.name]=el.value;await save(o);f.reset();alert('Registro salvo neste aparelho!');refresh();show('dashboard')})}
+function setupSelects(records){let av=records.filter(x=>x.type==='aviary');document.querySelectorAll('.aviarySelect,#lotAviary').forEach(s=>{let v=s.value;s.innerHTML=av.map(a=>`<option>${a.name}</option>`).join('')||'<option value="">Cadastre um aviário</option>';if(v)s.value=v});document.querySelectorAll('.lotSelect').forEach(s=>{let v=s.value, avi=s.closest('form').elements.aviary?.value;let lots=records.filter(x=>x.type==='lot'&&(!avi||x.aviary===avi));s.innerHTML='<option value="">Selecione (opcional)</option>'+lots.map(l=>`<option>${l.code||l.brf||'Lote'} — ${l.aviary}</option>`).join('');s.value=v})}
+async function refresh(){if(!db)return;let r=await all(), av=r.filter(x=>x.type==='aviary'), lots=r.filter(x=>x.type==='lot');setupSelects(r);
+let alive=lots.reduce((s,l)=>s+(+l.birds||0),0), mort=r.filter(x=>x.type==='mortality').reduce((s,x)=>s+(+x.qty||0),0), feed=r.filter(x=>x.type==='feed').reduce((s,x)=>s+(+x.kg||0),0),water=r.filter(x=>x.type==='water').reduce((s,x)=>s+(+x.liters||0),0);
+document.getElementById('summary').innerHTML=[['Aviários',av.length],['Lotes cadastrados',lots.length],['Aves alojadas',alive.toLocaleString('pt-BR')],['Mortalidade lançada',mort.toLocaleString('pt-BR')],['Ração recebida',feed.toLocaleString('pt-BR')+' kg'],['Água registrada',water.toLocaleString('pt-BR')+' L']].map(x=>`<div class="card metric"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('');
+document.getElementById('aviaries').innerHTML=av.map(a=>{let l=lots.filter(x=>x.aviary===a.name);return `<div class="card" style="margin-bottom:9px"><div class="aviary"><b>${a.name}</b><span class="pill">${l.length?l.length+' lote(s)':'Sem lote cadastrado'}</span></div><span class="muted">${a.capacity||'—'} aves de capacidade · ${a.area||'—'} m²</span></div>`}).join('')||'<div class="card empty">Cadastre AV01, AV02 e AV03 para começar.</div>';
+document.getElementById('aviaryList').innerHTML=av.map(a=>`<div class="listitem">${a.name} · capacidade ${a.capacity||'—'} · área ${a.area||'—'} m²</div>`).join('')||'<p class="muted">Nenhum aviário cadastrado.</p>';
+document.getElementById('historyList').innerHTML=r.filter(x=>!['aviary','lot'].includes(x.type)).sort((a,b)=>b.id-a.id).map(x=>`<div class="listitem"><b>${x.type}</b> · ${x.date||x.createdAt.slice(0,10)} ${x.time||''}<br><span class="muted">${x.aviary||''} ${x.qty?x.qty+' aves':''} ${x.kg?x.kg+' kg':''} ${x.liters?x.liters+' L':''}</span></div>`).join('')||'<div class="empty">Ainda não há lançamentos.</div>';
+}
+function backup(){all().then(r=>{let b=new Blob([JSON.stringify({app:'SGA - Mobile',version:'0.1',exportedAt:new Date().toISOString(),records:r},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup_sga_mobile.json';a.click();URL.revokeObjectURL(a.href)})}
+(async()=>{await openDB();['aviaryForm','lotForm','mortalityForm','feedForm','waterForm','environmentForm'].forEach(id=>{let f=document.getElementById(id);if(f)f.addEventListener('submit',async e=>{e.preventDefault();let type={aviaryForm:'aviary',lotForm:'lot',mortalityForm:'mortality',feedForm:'feed',waterForm:'water',environmentForm:'environment'}[id],o={type,createdAt:new Date().toISOString()};for(let el of f.elements)if(el.name)o[el.name]=el.value;await save(o);f.reset();await refresh();alert('Salvo com sucesso! Os dados estão no aparelho.');show('dashboard')})});await refresh();document.querySelectorAll('input[type=date]').forEach(x=>x.value=today())})();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
