@@ -1,20 +1,10 @@
-SGA - Mobile Android — versão 0.3
+SGA - Mobile Android — versão 0.4
 
-Novidade:
-- Cabeçalho com a marca SGA - Mobile funciona como atalho para voltar à tela inicial de boas-vindas.
-- Ao voltar à tela inicial, a navegação inferior é ocultada; o botão Entrar retorna ao Dashboard.
-- Cache offline atualizado para a versão 0.3.
+Correção:
+- Corrigido o cadastro de lote individual. O campo de categoria (Misto/Macho/Fêmea) tinha o mesmo nome interno usado para identificar o tipo de registro, fazendo o lote ser salvo sem a classificação correta e não aparecer na contagem do Dashboard.
+- O campo agora é armazenado como birdType.
+- Cache offline atualizado para v04.
 
-Recursos presentes:
-- Dashboard com indicadores básicos.
-- Cadastro de aviários e lotes individuais.
-- Lançamento de mortalidade.
-- Recebimento de ração.
-- Consumo de água em litros.
-- Temperatura e umidade.
-- Histórico e backup JSON.
-- Armazenamento local IndexedDB.
-
-Limitações:
-- Dados ainda ficam separados por aparelho/navegador; não há sincronização.
-- A tela de pesagem completa e outros módulos seguem em desenvolvimento.
+Para atualizar:
+Substitua index.html, sw.js e LEIA-ME.txt no repositório. O manifest.webmanifest não mudou.
+Os registros já gravados com a versão anterior podem não ser reconhecidos como lotes; cadastre novamente após atualizar.
