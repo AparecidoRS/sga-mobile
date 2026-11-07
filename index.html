@@ -26,7 +26,24 @@ h2{font-size:19px;margin:8px 0}.back{margin:8px 0 14px}.hidden{display:none!impo
 <body>
 <header><div class="top"><h1>🐔 SGA - Mobile</h1><span class="pill" style="background:#dcebe4">OFFLINE</span></div><p>Seu apoio diário na gestão dos aviários</p></header>
 <main>
-<section id="dashboard" class="view active">
+
+<section id="welcome" class="view active">
+ <div class="card" style="margin:34px auto;max-width:520px;text-align:center;padding:28px 20px">
+  <div style="font-size:58px;margin:8px 0 14px">🐔</div>
+  <h2 style="font-size:27px;margin:0 0 8px">SGA - Mobile</h2>
+  <p class="muted" style="line-height:1.55">Seu apoio diário na gestão dos aviários.</p>
+  <div class="grid" style="margin:22px 0;text-align:left">
+   <div class="card"><b>📋 Registros</b><br><small class="muted">Manejo e ocorrências</small></div>
+   <div class="card"><b>📊 Acompanhamento</b><br><small class="muted">Indicadores dos aviários</small></div>
+   <div class="card"><b>📱 Offline</b><br><small class="muted">Dados no aparelho</small></div>
+   <div class="card"><b>💾 Backup</b><br><small class="muted">Cópia dos registros</small></div>
+  </div>
+  <button style="width:100%;padding:15px" onclick="enterApp()">Entrar no SGA - Mobile</button>
+  <p class="notice">Aplicativo de apoio ao SGA principal. Os registros são armazenados neste aparelho e a transferência para o SGA Excel é manual.</p>
+ </div>
+</section>
+
+<section id="dashboard" class="view">
  <div class="section">Visão geral</div>
  <div class="grid" id="summary"></div>
  <div class="section">Aviários</div><div id="aviaries"></div>
@@ -53,14 +70,15 @@ h2{font-size:19px;margin:8px 0}.back{margin:8px 0 14px}.hidden{display:none!impo
 <section id="weighing" class="view"><h2>⚖️ Pesagem</h2><div class="card"><p class="muted">Nesta primeira versão, a tela está reservada. A próxima entrega implementará as amostras, tara, peso líquido, média por amostra, média geral e local da coleta.</p></div></section>
 <section id="history" class="view"><h2>Histórico de lançamentos</h2><div id="historyList"></div><button class="secondary" onclick="backup()">⬇️ Exportar backup JSON</button></section>
 </main>
-<nav><button class="active" data-view="dashboard" onclick="show('dashboard')">⌂<br>Início</button><button data-view="register" onclick="show('register')">＋<br>Cadastro</button><button data-view="mortality" onclick="show('mortality')">✎<br>Lançar</button><button data-view="history" onclick="show('history')">▤<br>Histórico</button></nav>
+<nav id="bottomNav" class="hidden"><button class="active" data-view="dashboard" onclick="show('dashboard')">⌂<br>Início</button><button data-view="register" onclick="show('register')">＋<br>Cadastro</button><button data-view="mortality" onclick="show('mortality')">✎<br>Lançar</button><button data-view="history" onclick="show('history')">▤<br>Histórico</button></nav>
 <script>
 const DB='sga_mobile_db', STORE='records';
 let db;
 function openDB(){return new Promise((resolve,reject)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{let d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});};r.onsuccess=()=>{db=r.result;resolve(db)};r.onerror=()=>reject(r.error)})}
 function all(){return new Promise((res,rej)=>{let r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 function save(obj){return new Promise((res,rej)=>{let r=db.transaction(STORE,'readwrite').objectStore(STORE).add(obj);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));refresh()}
+function enterApp(){document.getElementById('bottomNav').classList.remove('hidden');show('dashboard')}
+function show(id){if(id!=='welcome')document.getElementById('bottomNav').classList.remove('hidden');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));refresh()}
 function val(form,name){return form.elements[name]?.value||''}
 function today(){let d=new Date();return d.toISOString().slice(0,10)}
 function stamp(form){return {date:val(form,'date')||today(),time:val(form,'time')||new Date().toTimeString().slice(0,5)}}
@@ -74,7 +92,7 @@ document.getElementById('aviaryList').innerHTML=av.map(a=>`<div class="listitem"
 document.getElementById('historyList').innerHTML=r.filter(x=>!['aviary','lot'].includes(x.type)).sort((a,b)=>b.id-a.id).map(x=>`<div class="listitem"><b>${x.type}</b> · ${x.date||x.createdAt.slice(0,10)} ${x.time||''}<br><span class="muted">${x.aviary||''} ${x.qty?x.qty+' aves':''} ${x.kg?x.kg+' kg':''} ${x.liters?x.liters+' L':''}</span></div>`).join('')||'<div class="empty">Ainda não há lançamentos.</div>';
 }
 function backup(){all().then(r=>{let b=new Blob([JSON.stringify({app:'SGA - Mobile',version:'0.1',exportedAt:new Date().toISOString(),records:r},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup_sga_mobile.json';a.click();URL.revokeObjectURL(a.href)})}
-(async()=>{await openDB();['aviaryForm','lotForm','mortalityForm','feedForm','waterForm','environmentForm'].forEach(id=>{let f=document.getElementById(id);if(f)f.addEventListener('submit',async e=>{e.preventDefault();let type={aviaryForm:'aviary',lotForm:'lot',mortalityForm:'mortality',feedForm:'feed',waterForm:'water',environmentForm:'environment'}[id],o={type,createdAt:new Date().toISOString()};for(let el of f.elements)if(el.name)o[el.name]=el.value;await save(o);f.reset();await refresh();alert('Salvo com sucesso! Os dados estão no aparelho.');show('dashboard')})});await refresh();document.querySelectorAll('input[type=date]').forEach(x=>x.value=today())})();
+(async()=>{await openDB();['aviaryForm','lotForm','mortalityForm','feedForm','waterForm','environmentForm'].forEach(id=>{let f=document.getElementById(id);if(f)f.addEventListener('submit',async e=>{e.preventDefault();let type={aviaryForm:'aviary',lotForm:'lot',mortalityForm:'mortality',feedForm:'feed',waterForm:'water',environmentForm:'environment'}[id],o={type,createdAt:new Date().toISOString()};for(let el of f.elements)if(el.name)o[el.name]=el.value;await save(o);f.reset();await refresh();alert('Salvo com sucesso! Os dados estão no aparelho.');show('dashboard')})});await refresh();document.getElementById('bottomNav').classList.add('hidden');document.querySelectorAll('input[type=date]').forEach(x=>x.value=today())})();
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body></html>

@@ -1,20 +1,20 @@
-SGA - Mobile Android — versão inicial 0.1
+SGA - Mobile Android — versão 0.2
 
-O que já funciona:
+Novidade:
+- Tela inicial de boas-vindas com botão Entrar antes do Dashboard.
+
+Recursos desta base:
 - Dashboard com indicadores básicos derivados dos registros.
 - Cadastro de aviários e lotes individuais.
-- Lançamento de mortalidade (uma classificação por registro).
-- Recebimento de ração por silo (um lançamento por silo).
+- Lançamento de mortalidade.
+- Recebimento de ração por silo.
 - Consumo de água diretamente em litros.
 - Ambiente: temperatura e umidade máximas e mínimas.
 - Histórico básico.
 - Backup JSON.
 - Banco local IndexedDB e suporte inicial a funcionamento offline.
 
-Importante:
-- Esta é a primeira base funcional, ainda não é a versão completa.
-- A tela de pesagem está reservada para implementação da lógica de amostras.
-- Para instalar como PWA no Android, publique os arquivos em um endereço HTTPS.
-  Abra o endereço no Chrome Android > menu ⋮ > Instalar app / Adicionar à tela inicial.
-- O service worker exige HTTPS (ou localhost). Abrir index.html diretamente não instala PWA.
-- Não use os dados desta versão como único arquivo de segurança: faça backups JSON.
+Limitações:
+- A tela de pesagem está reservada para implementação da lógica completa de amostras.
+- Os dados ficam separados por aparelho/navegador; ainda não há sincronização.
+- Para instalar como PWA no Android, publique os arquivos em HTTPS.
