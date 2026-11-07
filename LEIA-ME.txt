@@ -1,20 +1,20 @@
-SGA - Mobile Android — versão 0.2
+SGA - Mobile Android — versão 0.3
 
 Novidade:
-- Tela inicial de boas-vindas com botão Entrar antes do Dashboard.
+- Cabeçalho com a marca SGA - Mobile funciona como atalho para voltar à tela inicial de boas-vindas.
+- Ao voltar à tela inicial, a navegação inferior é ocultada; o botão Entrar retorna ao Dashboard.
+- Cache offline atualizado para a versão 0.3.
 
-Recursos desta base:
-- Dashboard com indicadores básicos derivados dos registros.
+Recursos presentes:
+- Dashboard com indicadores básicos.
 - Cadastro de aviários e lotes individuais.
 - Lançamento de mortalidade.
-- Recebimento de ração por silo.
-- Consumo de água diretamente em litros.
-- Ambiente: temperatura e umidade máximas e mínimas.
-- Histórico básico.
-- Backup JSON.
-- Banco local IndexedDB e suporte inicial a funcionamento offline.
+- Recebimento de ração.
+- Consumo de água em litros.
+- Temperatura e umidade.
+- Histórico e backup JSON.
+- Armazenamento local IndexedDB.
 
 Limitações:
-- A tela de pesagem está reservada para implementação da lógica completa de amostras.
-- Os dados ficam separados por aparelho/navegador; ainda não há sincronização.
-- Para instalar como PWA no Android, publique os arquivos em HTTPS.
+- Dados ainda ficam separados por aparelho/navegador; não há sincronização.
+- A tela de pesagem completa e outros módulos seguem em desenvolvimento.

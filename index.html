@@ -24,7 +24,7 @@ h2{font-size:19px;margin:8px 0}.back{margin:8px 0 14px}.hidden{display:none!impo
 </style>
 </head>
 <body>
-<header><div class="top"><h1>🐔 SGA - Mobile</h1><span class="pill" style="background:#dcebe4">OFFLINE</span></div><p>Seu apoio diário na gestão dos aviários</p></header>
+<header onclick="show('welcome')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();show('welcome')}" role="link" tabindex="0" title="Voltar à tela inicial" style="cursor:pointer"><div class="top"><h1>🐔 SGA - Mobile</h1><span class="pill" style="background:#dcebe4">OFFLINE</span></div><p>Seu apoio diário na gestão dos aviários</p></header>
 <main>
 
 <section id="welcome" class="view active">
@@ -78,7 +78,7 @@ function openDB(){return new Promise((resolve,reject)=>{let r=indexedDB.open(DB,
 function all(){return new Promise((res,rej)=>{let r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 function save(obj){return new Promise((res,rej)=>{let r=db.transaction(STORE,'readwrite').objectStore(STORE).add(obj);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 function enterApp(){document.getElementById('bottomNav').classList.remove('hidden');show('dashboard')}
-function show(id){if(id!=='welcome')document.getElementById('bottomNav').classList.remove('hidden');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));refresh()}
+function show(id){if(id==='welcome')document.getElementById('bottomNav').classList.add('hidden');else document.getElementById('bottomNav').classList.remove('hidden');document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));refresh()}
 function val(form,name){return form.elements[name]?.value||''}
 function today(){let d=new Date();return d.toISOString().slice(0,10)}
 function stamp(form){return {date:val(form,'date')||today(),time:val(form,'time')||new Date().toTimeString().slice(0,5)}}
